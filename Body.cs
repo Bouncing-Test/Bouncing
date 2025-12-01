@@ -14,7 +14,10 @@ namespace Bouncing
         private double height = 50;
         private Pen pen;
 
-        private double speed = 200.0;
+        // 1m = 100px
+        private double gravity = 980.0;
+
+        private double dy = 0.0;
 
         public Body(double x, double y)
         {
@@ -23,15 +26,29 @@ namespace Bouncing
             pen = new Pen(Color.Black, 5);
         }
 
-        public void Draw(Graphics g, double deltaTime)
+        public double Draw(Graphics g, double deltaTime, Rectangle client)
         {
-            Update(deltaTime);
+            var speed = Update(deltaTime, client);
             g.DrawEllipse(pen, (int)x, (int)y, (int)width, (int)height);
+            return speed;
         }
 
-        private void Update(double deltaTime)
+        private double Update(double deltaTime, Rectangle client)
         {
-            y = y + this.speed * deltaTime;
+            // Apply acceleration (gravity)
+            dy += gravity * deltaTime;
+
+            // Update position
+            y += dy * deltaTime;
+
+            // Bounce
+            if (y + height >= client.Height)
+            {
+                y = client.Height - height;
+                dy = dy * -0.9;
+            }
+            // dy to m/s to 1dp
+            return Math.Round(dy / 100, 1);
         }
     }
 }

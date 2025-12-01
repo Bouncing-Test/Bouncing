@@ -23,12 +23,12 @@ namespace Bouncing
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             var elapsed = stopwatch.Elapsed;
-            var deltaTime = (elapsed - previousTime).Milliseconds/1000.0;
+            var deltaTime = (elapsed - previousTime).TotalSeconds ;
             previousTime = elapsed;
 
-
-            e.Graphics.DrawString(deltaTime.ToString(), font, brush, new Point(50,50));
-            body.Draw(e.Graphics, deltaTime);
+           var speed = body.Draw(e.Graphics, deltaTime, ClientRectangle);
+            e.Graphics.DrawString(speed.ToString() + "m/s", font, brush, new Point(50, 50));
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
