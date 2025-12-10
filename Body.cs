@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,15 +15,24 @@ namespace Bouncing
         private double height = 50;
         private Pen pen;
 
-        // 1m = 100px
-        private double gravity = 980.0;
 
-        private double dy = 0.0;
+        private double dy;
+        private double dx;
 
         public Body(double x, double y)
         {
+            const double maxSpeed = 50.0;
+            const double speed = 20.0;
+
             this.x = x;
             this.y = y;
+            dy = (Random.Shared.NextDouble() * maxSpeed) - (maxSpeed/2);
+            dx = (Random.Shared.NextDouble() * maxSpeed) - (maxSpeed/2);
+
+            double length = Math.Sqrt((dx * dx + dy * dy));
+            dy = (dy/length) * speed;
+            dx = (dx/length) * speed;
+
             pen = new Pen(Color.Black, 5);
         }
 
@@ -35,12 +45,10 @@ namespace Bouncing
 
         private double Update(double deltaTime, Rectangle client)
         {
-            // Apply acceleration (gravity)
-            dy += gravity * deltaTime;
-
             // Update position
             y += dy * deltaTime;
 
+            x += dx * deltaTime;
             // Bounce
             if (y + height >= client.Height)
             {
